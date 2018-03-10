@@ -17,7 +17,7 @@ namespace Inspinia_MVC5_SeedProject.Models
         //}
 
         [Key]
-        public decimal userNationalID { get; set; }
+        public int userNationalID { get; set; }
 
         [StringLength(20)]
         public string name_A { get; set; }
