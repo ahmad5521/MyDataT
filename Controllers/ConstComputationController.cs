@@ -11,19 +11,10 @@ using System.Web.Mvc;
 namespace Inspinia_MVC5_SeedProject.Controllers
 {
 
-    class khalid
-    {
-        public int id { get; set; }
-
-        public string name { get; set; }
-
-    }
 
     public class ConstComputationController : Controller
     {
-        CONST constDB = new CONST();
-
-        
+        CONST constDB = new CONST();        
 
         string cs = ConfigurationManager.ConnectionStrings["CONST"].ConnectionString;
 
@@ -42,54 +33,27 @@ namespace Inspinia_MVC5_SeedProject.Controllers
         /// <returns></returns>
         public JsonResult List()
         {
-            List<ConstCompetitionViewModel> lccvm = new List<ConstCompetitionViewModel>();
+            List<ConstCompetitionViewModel> lccvm = new List<ConstCompetitionViewModel>();            
             try
-            {
-                using (SqlConnection con = new SqlConnection(cs))
+            
+                foreach (var item in constDB.ConstCompetitions)
                 {
-                    con.Open();
-                    SqlCommand com = new SqlCommand("constCompetitionTest", con);
-                    com.CommandType = CommandType.StoredProcedure;
-                    SqlDataReader rdr = com.ExecuteReader();
-                    while (rdr.Read())
+                    lccvm.Add(new ConstCompetitionViewModel()
                     {
-                        lccvm.Add(new ConstCompetitionViewModel
-                        {
-                            CompetitionID = Convert.ToInt32(rdr["CompetitionID"]),
-                            competitionNo = rdr["competitionNo"].ToString(),
-                            competitionNote = rdr["competitionNote"].ToString(),
-                            CompetitionAddedDate = Convert.ToDateTime(rdr["CompetitionAddedDate"]),
-                            competitionFragmented = Convert.ToBoolean(rdr["competitionFragmented"]),
-                            CompetitionStatusName = rdr["CompetitionStatusName"].ToString(),
-                            UserName = rdr["fullName"].ToString(),
-                        });
-                    }
+                        CompetitionID = item.CompetitionID,
+                        competitionNo = item.competitionNo,
+                        competitionNote = item.competitionNote,
+                        CompetitionAddedDate = item.CompetitionAddedDate,
+                        competitionFragmented = item.competitionFragmented,
+                        CompetitionStatusName = ((ConstCompetitionStatu)constDB.ConstCompetitionStatus.Where(p => p.CompetitionStatusID == item.CompetitionStatusID_FK).FirstOrDefault()).CompetitionStatusName,
+                        UserName = ((User)constDB.Users.Where(p => p.userNationalID == item.userNationalID_FK).FirstOrDefault()).name_A + " " + ((User)constDB.Users.Where(p => p.userNationalID == item.userNationalID_FK).FirstOrDefault()).lastName_A
+                    });
                 }
             }
-            catch(Exception err)
+            catch (Exception err)
             {
                 return Json(err.Message, JsonRequestBehavior.AllowGet);
             }
-            //try
-            //{
-            //    foreach (var item in constDB.ConstCompetitions)
-            //    {
-            //        lccvm.Add(new ConstCompetitionViewModel()
-            //        {
-            //            CompetitionID = item.CompetitionID,
-            //            competitionNo = item.competitionNo,
-            //            competitionNote = item.competitionNote,
-            //            CompetitionAddedDate = item.CompetitionAddedDate,
-            //            competitionFragmented = item.competitionFragmented,
-            //            CompetitionStatusName = ((ConstCompetitionStatu)constDB.ConstCompetitionStatus.Where(p => p.CompetitionStatusID == item.CompetitionStatusID_FK).FirstOrDefault()).CompetitionStatusName,
-            //            UserName = ((User)constDB.Users.Where(p => p.userNationalID == item.userNationalID_FK).FirstOrDefault()).name_A + " " + ((User)constDB.Users.Where(p => p.userNationalID == item.userNationalID_FK).FirstOrDefault()).lastName_A
-            //        });
-            //    }
-            //}
-            //catch (Exception err)
-            //{
-            //    return Json(err.Message, JsonRequestBehavior.AllowGet);
-            //}
             return Json(lccvm, JsonRequestBehavior.AllowGet);
         }
 
