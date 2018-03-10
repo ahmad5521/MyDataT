@@ -23,7 +23,7 @@ namespace Inspinia_MVC5_SeedProject.Models
 
         public DateTime? CompetitionAddedDate { get; set; }
 
-        public decimal? userNationalID_FK { get; set; }
+        public int? userNationalID_FK { get; set; }
 
         //public virtual ConstCompetitionStatu ConstCompetitionStatu { get; set; }
 
